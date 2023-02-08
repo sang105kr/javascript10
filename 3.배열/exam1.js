@@ -139,3 +139,29 @@
   const arr4 = [1, 2, [3, 4, [5, 6, [7, 8, [9, 10]]]]];
   arr4.flat(Infinity);  // [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 }
+{
+  //배열 참조   arr, arr2가 같은 배열을 가리킴
+  const arr = [1,2,3];
+  const arr2 = arr;
+  arr2[0] = 4;
+  console.log(arr[0], arr2[0]);
+}
+{
+  // 배열 복사
+  // case1) splice
+  {
+    const arr = [1,2,3];
+    const arr2 = arr.slice();//배열 복사
+    console.log(arr, arr2); //[ 1, 2, 3 ] [ 1, 2, 3 ]
+    arr[0] =4;
+    console.log(arr, arr2); //[ 4, 2, 3 ] [ 1, 2, 3 ]
+  }
+  // case2) 배열 디스트리뷰션 (ES6)
+  {
+    const arr = [1,2,3];
+    const arr2 = [...arr]; //배열 복사  
+    console.log(arr, arr2); //[ 1, 2, 3 ] [ 1, 2, 3 ]
+    arr[0] =4;
+    console.log(arr, arr2); //[ 4, 2, 3 ] [ 1, 2, 3 ]
+  }
+}
