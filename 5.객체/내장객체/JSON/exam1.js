@@ -21,5 +21,5 @@
   console.log(typeof(v8));
 
   console.log(v8.name); //undefined
-  console.log(v8.age); //undefined
+  console.log(v8.age); //undefineda
 }
