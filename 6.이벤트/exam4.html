@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    * { outline:1px solid red;}
+    body{
+      height:100vh;
+      background-color: yellow;
+    }
+    form {
+      width:200px;
+      height:200px;
+      background-color: yellowgreen;
+    }
+  </style>
+
+</head>
+<body>
+  <form action="">
+    <button type="button">클릭</button>
+  </form>
+  <script>
+    // addEventListener('이벤트종류',이벤트핸들러,이벤트흐름)
+    // if(이벤트흐름 = false) 캡처링단계
+    // if(이벤트흐름 = true) 버블링단계
+    const $button = document.querySelector('[type]');
+    $button.addEventListener('click',function(){
+      console.log('캡처단계-버튼클릭');
+    },false);
+    $button.addEventListener('click',function(){
+      console.log('버블단계-버튼클릭');
+    },true);
+
+    const $body = document.querySelector('body');
+    $body.addEventListener('click',function(){
+      console.log('캡처단계-바디클릭');
+    },false);
+    
+    $body.addEventListener('click',function(){
+      console.log('버블단계-바디클릭');
+    },true);
+  </script>
+</body>
+</html>

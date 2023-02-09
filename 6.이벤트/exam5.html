@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>이벤트 리스너 등록방법 3가지</title>
+</head>
+<body>
+
+  <!--1)인라인 방식 -->
+  <input id="input1" type="text"
+    onkeydown="console.log('클릭1');console.log('클릭2');f1(event);"
+    onkeyup="console.log('keyup')"
+    onkeypress="console.log('keypress')"
+    >
+
+  <!--2)이벤트타겟.on이벤트명-->
+  <input id="input2" type="text">
+
+  <!--3)이벤트타켓.addEventListener()-->
+  <input id="input3" type="text">
+
+  <script>
+    function f1(evt){
+      console.log('클릭3');
+      console.log('클릭4');
+      console.dir(evt);
+    }
+
+    const $input2 = document.querySelector('#input2');
+    $input2.onclick = ()=>{
+      console.log('input2 click');
+    }
+    $input2.onkeydown = ()=>{
+      console.log('input2 keydown');
+    }
+
+    const $input3 = document.querySelector('#input3');
+
+    $input3.addEventListener('click', function(evt){
+      console.log('input3 click capturing');
+      console.dir(evt);
+    },false);
+    $input3.addEventListener('click', evt=>{
+      console.log('input3 click bubbling');
+      console.dir(evt);
+    },true);
+
+    $input3.addEventListener('keydown', ()=>{
+      console.log('input3 keydown');
+    });
+
+  </script>
+</body>
+</html>
