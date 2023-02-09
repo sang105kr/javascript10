@@ -29,11 +29,7 @@
     <section>
       <h3 class="title">버킷리스트</h3>
       <p><input id="object" type="text"><button class="btn" id="addBtn">추가</button></p>
-      <ul id="bucketList">
-        <li>item1</li>
-        <li>item2</li>
-        <li>item3</li>
-      </ul>
+      <ul id="bucketList"></ul>
     </section>
   </div>
   <script>
@@ -54,7 +50,7 @@
     }  
 
     const addBtn_h = evt => {
-      console.log('클릭');
+      // console.log('클릭');
       const $input = evt.target.previousElementSibling
       const item = $input.value;
       addElement(item);
@@ -70,8 +66,8 @@
       // $input.focus();
     }
     const input_h = evt => {
-      console.log('엔터');
-      console.dir(evt);
+      // console.log('엔터');
+      // console.dir(evt);
       if(evt.key != 'Enter') return;
       const item = evt.target.value;
       addElement(item);
