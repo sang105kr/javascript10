@@ -1,3 +1,13 @@
+// Array.Prototype.foreach()
+// Array.Prototype.map()
+// Array.Prototype.find()
+// Array.Prototype.filter()
+// Array.prototype.every()
+// Array.prototype.some()
+// Array.prototype.sort()
+// Array.prototype.reduce()
+// Array.prototype.sort()
+
 const data = `{
                 "members":[
                   {
@@ -121,13 +131,39 @@ console.log(typeof(result));
   }
   {//case3) map,reduce,forEach,set
     const hobbys3 =  result.members.map(m=>m.hobby)
-                          .reduce((acc,hobby)=> acc.concat(hobby) ,[]);
+                           .reduce((acc,hobby)=> acc.concat(hobby) ,[]);
     (new Set(hobbys3)).forEach(hobby=>console.log(hobby));   
   }                          
 }
 // 6. 여성회원중 나이가 가장 많은 회원의 이름은?
 {
+  {//case1) 반복문 사용
+    //1) 여성회원 추출
+    const women = [];
+    for(let i=0; i<result.members.length; i++){
+      if(result.members[i].gender == '여'){
+          women.push(result.members[i]);
+      }
+    }
 
+    //2) 여성회원중 나이가 가장 많은 회원의 이름
+    let maxAgeOfWomen = women[0].age;
+    let idxOfmaxAgeOfWomen = 0;
+    for(let i=0; i<women.length; i++){
+      if(women[i].age > maxAgeOfWomen){
+        maxAgeOfWomen = women[i].age;
+        idxOfmaxAgeOfWomen = i;
+      }
+    }
+
+    console.log(`이름 = ${women[idxOfmaxAgeOfWomen].name}`);
+  }
+  {//case2) 고차함수 사용 filter, sort
+    console.log(
+      result.members.filter(m=>m.gender == '여')
+                    .sort((m1,m2)=>m2.age - m1.age)[0].name 
+    );
+  }
 }
 // 7. 모든회원이 여성회원들로만 이뤄져있는지 판단하시오.
 {
