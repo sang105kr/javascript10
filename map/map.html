@@ -203,44 +203,53 @@
     //키워드 검색
     const places = new kakao.maps.services.Places(map);
 
-    function findedData(data, status, pagination){
-      if (status === kakao.maps.services.Status.OK) {
-        console.log(data,status,pagination);
-        //좌표경계 생성
-        const bounds = new naver.maps.LatLngBounds();
-        data.forEach(ele=>{
-          const latLng = new naver.maps.LatLng(ele.y,ele.x); 
-          //마커생성
-          const marker = makeMarker( latLng, ele.place_name);
-          //정보창 생성 옵션
-          const infoWinOption = {
-             content : makeContentsOfInfoWindow(ele.place_name,ele.phone,ele.place_url),
-             anchorSize : new naver.maps.Size(10,10)
+    const findedData = (function(){
+      const markers = [];
+      return (data, status, pagination)=>{
+        if (status === kakao.maps.services.Status.OK) {
+          //기존 마커 제거
+          if(markers){
+            markers.forEach(marker=>marker.setMap(null));
           }
-          //정보창 생성
-          const infowin = new naver.maps.InfoWindow(infoWinOption);
+          console.log(data,status,pagination);
+          //좌표경계 생성
+          const bounds = new naver.maps.LatLngBounds();
+          data.forEach(ele=>{
+            const latLng = new naver.maps.LatLng(ele.y,ele.x); 
+            //마커생성
+            const marker = makeMarker( latLng, ele.place_name);
+            markers.push(marker);
 
-          //마커에 클릭 이벤트 핸들러 등록
-          naver.maps.Event.addListener(marker,'click',e=>{
-            //지도상에 마커의 정보창이 있으면 정보창을 닫고 없으면 정보창 띄우기
-            if(infowin.getMap()){
-              infowin.close();
-            }else{
-              infowin.open(map,marker);
+            //정보창 생성 옵션
+            const infoWinOption = {
+              content : makeContentsOfInfoWindow(ele.place_name,ele.phone,ele.place_url),
+              anchorSize : new naver.maps.Size(10,10)
             }
+            //정보창 생성
+            const infowin = new naver.maps.InfoWindow(infoWinOption);
+
+            //마커에 클릭 이벤트 핸들러 등록
+            naver.maps.Event.addListener(marker,'click',e=>{
+              //지도상에 마커의 정보창이 있으면 정보창을 닫고 없으면 정보창 띄우기
+              if(infowin.getMap()){
+                infowin.close();
+              }else{
+                infowin.open(map,marker);
+              }
+            });
+            //좌표경계 확장
+            bounds.extend(latLng);
           });
-          //좌표경계 확장
-          bounds.extend(latLng);
-        });
-        //좌표경계로 지도중심 이동
-        map.panToBounds(bounds);
+          //좌표경계로 지도중심 이동
+          map.panToBounds(bounds);
+        }
       }
-    }
+    }());
+
     const $searchBtn = document.getElementById('searchBtn');
     $searchBtn.addEventListener('click', e => {
       const keyword = document.getElementById('keyword').value;
       const options = {};
-      const prevMakers = [];
       places.keywordSearch(keyword, findedData, options);
 
     },false);
