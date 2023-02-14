@@ -36,6 +36,7 @@
       padding:5px;
       border:1px solid #fff;
       border-radius: 4px;
+      cursor:pointer;
       z-index: 10;
     }
     #default_position_marker{
@@ -110,19 +111,26 @@
       document.getElementById('map'),
       mapOptions);
 
-    //마커 컨텐트
-    const markerContent = `<div id="default_position_marker"></div>`;
-     
-    //마커표시  
-    const defaultPositionMarkerOption =  {
-            map:map,
-            position: defaultPosition,
-            title:'태화강역',   //툴팁
-            icon: {
-              content : markerContent
-            }
+    //마커 생성하는 함수
+    //매개변수(좌표,툴팁), 반환값:마커객체  
+    function makeMarker(position,toolTip){  
+      //마커 컨텐트
+      const markerContent = `<div id="default_position_marker"></div>`;
+      
+      //마커생성옵션  
+      const defaultPositionMarkerOption =  {
+              map:map,
+              position: position,
+              title: toolTip,   //툴팁
+              icon: {
+                content : markerContent
+              }
+      }
+      //마커생성
+      const defaultPositionMarker = new naver.maps.Marker(defaultPositionMarkerOption);  
+
+      return defaultPositionMarker;
     }
-    const defaultPositionMarker = new naver.maps.Marker(defaultPositionMarkerOption);  
 
     //정보창 컨텐트
     //업체명,연락처,홈페이지
@@ -142,12 +150,33 @@
     const defaultPositionMarkerInfoWindow = new naver.maps.InfoWindow(defaultPositionMarkerInfoWindowOption);
 
     //마커에 이벤트 핸들러 등록하기
+    const defaultPositionMarker = makeMarker(defaultPosition,'태화강역');
     naver.maps.Event.addListener(defaultPositionMarker,'click',(e)=>{
       //지도상에 마커의 정보창이 있으면 정보창을 닫고 없으면 정보창 띄우기
       if(defaultPositionMarkerInfoWindow.getMap()){
         defaultPositionMarkerInfoWindow.close();
       }else{
         defaultPositionMarkerInfoWindow.open(map,defaultPositionMarker);
+      }
+    });
+
+    //내위치정보 받아오기
+    const myps = document.getElementById('myps');
+    myps.addEventListener('click',e=>{
+      const geolocation = globalThis.navigator.geolocation;
+      if(geolocation){
+        geolocation.getCurrentPosition((position)=>{
+          //내위치의 위도,경도
+          const myPosition = new naver.maps.LatLng(position.coords.latitude,position.coords.longitude);  
+          //내위치 마커표시
+          makeMarker(myPosition,'내위치');
+          //내위치로 지도중심이동
+          map.setCenter(myPosition);
+          //지도의 줌레벨 조정
+          map.setZoom(20);
+        });
+      }else{
+        throw new Error('현 브라우저는 위치정보를 제공하지 않습니다');
       }
     });
   </script>
