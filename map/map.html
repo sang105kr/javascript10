@@ -5,7 +5,10 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>네이버 지도 API 구현하기</title>
+  <!-- 네이버 API-->
   <script type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=uhq6cts1yx"></script>
+  <!-- 카카오 API -->
+  <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=0d19dafd2380499ec9c17a01cf58170b&libraries=services"></script>
   <style>
     * {outline: 1px solid red;}
     html,body,h3 {
@@ -29,6 +32,7 @@
     #map{
       width:100%; height: 100%;
     }
+    /* 내위치 */
     #myps {
       position:absolute;
       top:50px; left:50px;
@@ -39,6 +43,19 @@
       cursor:pointer;
       z-index: 10;
     }
+    /* 장소검색 */
+    #search {
+      position: absolute;
+      top:100px; left:50px;
+      z-index: 10;
+    }
+    #keyword {
+      margin-right:5px;
+      border:none;
+      border-radius: 4px;
+      padding:5px;
+    }
+
     #default_position_marker{
       width:20px; height:20px;
       background-color: rgba(0,255,0,.2);
@@ -70,6 +87,9 @@
       <!--지도표현위치-->
       <div id="map">
         <div id="myps">내위치</div>
+        <div id="search">
+          <input type="text" id="keyword"><button>검색</button>
+        </div>
       </div>
     </div>
     <div id="bottom"></div>
@@ -179,6 +199,20 @@
         throw new Error('현 브라우저는 위치정보를 제공하지 않습니다');
       }
     });
+
+    //키워드 검색
+    const places = new kakao.maps.services.Places(map);
+    const keyword = '대왕암공원 오토캠핑장';
+    const options = {
+
+    };
+
+    function findedData(data, status, pagination){
+      if (status === kakao.maps.services.Status.OK) {
+        console.log(data,status,pagination);
+      }
+    }
+    places.keywordSearch(keyword, findedData, options);
   </script>
 </body>
 </html>
