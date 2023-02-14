@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>네이버 지도 API 구현하기</title>
+  <script type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=uhq6cts1yx"></script>
+  <style>
+    * {outline: 1px solid red;}
+    html,body,h3 {
+      margin:0; padding:0;
+    }
+    html,body { height:100%; }
+    
+    #wrap{
+      display: grid;
+      grid-template-columns: 1fr;
+      grid-template-rows: 50px 1fr 50px;
+      height:100%;
+    }
+    #top{
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #333;
+      color : #fff;
+    }
+    #map{
+      width:100%; height: 100%;
+    }
+    #myps {
+      position:absolute;
+      top:50px; left:50px;
+      background-color: #fff;
+      padding:5px;
+      border:1px solid #fff;
+      border-radius: 4px;
+      z-index: 10;
+    }
+    #default_position_marker{
+      width:20px; height:20px;
+      background-color: rgba(0,255,0,.2);
+      border:1px solid rgba(0,255,0,.2);
+      border-radius: 50%;
+    }
+    .info_window_wrap {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: start;
+      padding:10px;
+      background-color: #fff;
+      border: #fff;
+      border-radius: 5%;
+      box-shadow: 5px 5px 2px 2px rgba(0,0,0,.2);
+      font-size: 0.8rem;
+      line-height: 1.5;
+    }
+    .info_window_wrap .info_window_wrap__company_name {
+      font-weight:bold;
+    }
+  </style>
+</head>
+<body>
+  <div id="wrap">
+    <div id="top"><h3>네이버지도 구현</h3></div>
+    <div id="main">
+      <!--지도표현위치-->
+      <div id="map">
+        <div id="myps">내위치</div>
+      </div>
+    </div>
+    <div id="bottom"></div>
+  </div>
+  <script>
+    //
+    const data = {
+      companies : [
+        { compnay :"울산남부경찰서",
+          contact :"연락처1",
+          homepage:"홈페이지1",
+          lat:35.53583283516309,
+          lng:129.31042062271774
+        },
+        { compnay :"울산KH정보교육원",
+          contact :"연락처1",
+          homepage:"홈페이지1",
+          lat:35.535004447370866,
+          lng:129.31085985052087
+        },
+        { compnay :"울산여자고등학교",
+          contact :"연락처1",
+          homepage:"홈페이지1",
+          lat:35.535352004072344,
+          lng:129.30918044284687 
+        }                
+      ]
+    }
+
+    //지도생성옵션
+    const defaultPosition = new naver.maps.LatLng(35.540423232278556,129.35398818341366)
+    const mapOptions = {
+      center: defaultPosition,
+      zoom : 16
+    };
+
+    //지도생성
+    const map = new naver.maps.Map(
+      document.getElementById('map'),
+      mapOptions);
+
+    //마커 컨텐트
+    const markerContent = `<div id="default_position_marker"></div>`;
+     
+    //마커표시  
+    const defaultPositionMarkerOption =  {
+            map:map,
+            position: defaultPosition,
+            title:'태화강역',   //툴팁
+            icon: {
+              content : markerContent
+            }
+    }
+    const defaultPositionMarker = new naver.maps.Marker(defaultPositionMarkerOption);  
+
+    //정보창 컨텐트
+    //업체명,연락처,홈페이지
+    const makeContentsOfInfoWindow = (company,contact,homepage)=>{
+      const $html = `<div class="info_window_wrap">
+                      <div class="info_window_wrap__company_name">${company}</div>
+                      <div class="info_widow_wrap__contact">${contact}</div>
+                      <div class="info_widow_wrap__homepage">${homepage}</div>
+                    </div>`;
+      return $html;
+    }
+    const defaultPositionMarkerInfoWindowOption = {
+      content : makeContentsOfInfoWindow('태화강역','010-1111-1111','http://www.naver.com'),
+      anchorSize : new naver.maps.Size(10,10)
+    }
+    //정보창 생성
+    const defaultPositionMarkerInfoWindow = new naver.maps.InfoWindow(defaultPositionMarkerInfoWindowOption);
+
+    //마커에 이벤트 핸들러 등록하기
+    naver.maps.Event.addListener(defaultPositionMarker,'click',(e)=>{
+      //지도상에 마커의 정보창이 있으면 정보창을 닫고 없으면 정보창 띄우기
+      if(defaultPositionMarkerInfoWindow.getMap()){
+        defaultPositionMarkerInfoWindow.close();
+      }else{
+        defaultPositionMarkerInfoWindow.open(map,defaultPositionMarker);
+      }
+    });
+  </script>
+</body>
+</html>
