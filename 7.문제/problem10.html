@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>버킷리스트 구현하기</title>
+  <style>
+    .input_read {
+      border: none;
+      outline: none;
+    }
+    .input_modify {
+      border: 1.8px solid rgb(188,188,188);
+    }
+    .input_modify:focus {
+      outline: 1px solid #000;
+    } 
+  </style>
+</head>
+<body>
+  <div><input type="text"><button id="add">등록</button></div>
+  <div id="bucketList">
+    <ul class="buckets">
+      <li class="bucket">
+        <input class="input_read" type="text" value="버킷리스트1" readonly> 
+        <button class="btn btn_del">삭제</button>
+        <button class="btn btn_modify">수정</button>
+      </li>
+      <li class="bucket">
+        <input class="input_modify" type="text" value="버킷리스트2" >
+        <button class="btn btn_cancel">취소</button>
+        <button class="btn btn_save">저장</button>
+      </li>
+    </ul>
+  </div>
+  <dialog id="modalDel">
+    <p>삭제하시겠습니까?</p>
+    <p><button class="btn yesBtn">yes</button><button class="btn noBtn">no</button></p>
+  </dialog>
+
+  <script>
+    const $buckets = document.querySelector('.buckets');
+    $buckets.addEventListener('click',e=>{
+      if(e.target.tagName != 'BUTTON') return;
+      console.log(e.target.classList[1]);
+      switch (e.target.classList[1]){
+        case 'btn_del':     del(e);     break;            //삭제
+        case 'btn_modify':  modify(e);  break;            //수정   
+        case 'btn_cancel':  calcel(e);  break;            //취소
+        case 'btn_save':    save(e);    break;            //저장
+        default : console.log('없는버튼');
+      }
+    });
+
+    //삭제
+    function del(e){
+      console.log('삭제');
+      // if(!confirm('삭제하시겠습니까')) return;
+      const $child = e.target;
+
+      //모달띄우기
+      const $modal = document.getElementById('modalDel');
+      $modal.setAttribute('open','open');
+
+      //yes버튼클릭시
+      $modal.querySelector('.yesBtn').addEventListener('click',e=>{
+        $buckets.removeChild($child.closest('.bucket'));
+        $modal.removeAttribute('open');
+      });
+      //no버튼 클릭시
+      $modal.querySelector('.noBtn').addEventListener('click',e=>{
+        $modal.removeAttribute('open');
+      });
+    }
+    //수정
+    function modify(e){
+      console.log('수정');
+    }
+    //취소
+    function calcel(e){
+      console.log('취소');
+    }
+    //저장
+    function save(e){
+      console.log('저장');
+    }
+  </script>
+</body>
+</html>
