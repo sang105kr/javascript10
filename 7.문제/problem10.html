@@ -40,15 +40,25 @@
   </dialog>
 
   <script>
+    const $add = document.getElementById('add');
     const $buckets = document.querySelector('.buckets');
+
+    $add.addEventListener('click',e=>{
+      const $input = e.target.previousElementSibling;
+      const bucketText = $input.value;
+      $buckets.insertAdjacentHTML('beforeEnd',makeReadBucket(bucketText));
+      $input.value = '';
+      $input.focus();
+    });
+
     $buckets.addEventListener('click',e=>{
       if(e.target.tagName != 'BUTTON') return;
       console.log(e.target.classList[1]);
       switch (e.target.classList[1]){
         case 'btn_del':     del(e);     break;            //삭제
         case 'btn_modify':  modify(e);  break;            //수정   
-        case 'btn_cancel':  calcel(e);  break;            //취소
-        case 'btn_save':    save(e);    break;            //저장
+        // case 'btn_cancel':  calcel(e);  break;            //취소
+        // case 'btn_save':    save(e);    break;            //저장
         default : console.log('없는버튼');
       }
     });
@@ -75,16 +85,61 @@
     }
     //수정
     function modify(e){
-      console.log('수정');
+      const $oldElement = e.target.closest('.bucket');
+      const oldText = $oldElement.querySelector('.input_read').value;
+
+      const $newElement = document.createElement('li');
+      $newElement.innerHTML = makeModifyBucket2(oldText);
+      
+      $buckets.replaceChild( $newElement, $oldElement);
+
+      //취소버튼 클릭시
+      $newElement.querySelector('.btn_cancel')
+                 .addEventListener('click',e=>{
+                  console.log('취소');  
+      
+                });
+
+      //저장버튼 클릭시                 
+      $newElement.querySelector('.btn_save')
+                 .addEventListener('click',e=>{
+                  console.log('저장');
+                 });                 
+
+      //취소
+      function calcel(e){
+        console.log('취소');
+      }
+      //저장
+      function save(e){
+        console.log('저장');
+      }
     }
-    //취소
-    function calcel(e){
-      console.log('취소');
+
+
+
+    //읽기모드 버킷
+    function makeReadBucket(bucketText){
+      return  `<li class="bucket">
+                  <input class="input_read" type="text" value="${bucketText}" readonly> 
+                  <button class="btn btn_del">삭제</button>
+                  <button class="btn btn_modify">수정</button>
+              </li>`;
     }
-    //저장
-    function save(e){
-      console.log('저장');
-    }
+    //수정모드 버킷
+    function makeModifyBucket(bucketText){
+      return  `<li class="bucket">
+                <input class="input_modify" type="text" value="${bucketText}" >
+                <button class="btn btn_cancel">취소</button>
+                <button class="btn btn_save">저장</button>
+              </li>`;
+    }    
+    function makeModifyBucket2(bucketText){
+      return  `<input class="input_modify" type="text" value="${bucketText}" >
+                <button class="btn btn_cancel">취소</button>
+                <button class="btn btn_save">저장</button>
+              `;
+    }    
   </script>
 </body>
 </html>
