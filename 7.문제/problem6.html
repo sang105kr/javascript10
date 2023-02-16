@@ -9,11 +9,60 @@
 <body>
   <div>
     <span id="result">0</span>
-    <button id="incressBtn">증가</button>
-    <button id="decressBtn">감소</button>
+    <button id="incressBtn" onclick="incress(event)">증가</button>
+    <button id="decressBtn" onclick="decress(event)">감소</button>
+  </div>
+  <div>
+    <span id="result2">0</span>
+    <button id="incressBtn2">증가</button>
+    <button id="decressBtn2">감소</button>
+  </div>
+  <div>
+    <span id="result3">0</span>
+    <button id="incressBtn3">증가</button>
+    <button id="decressBtn3">감소</button>
   </div>
   <script>
+    //case1) 시작태그에 on+이벤트타입="JS코드"
+    const $result = document.getElementById('result');
+    const incress= event => {
+      $result.textContent = parseInt($result.textContent) + 1; 
+      console.log(event);
+    }
+    const decress= event => {
+      $result.textContent = parseInt($result.textContent) - 1; 
+      console.log(event);
+    }
 
+    //case2) 이벤트타겟.on+이벤트타입 = function(){}
+    const $result2 = document.getElementById('result2');
+    const $incressBtn2 = document.getElementById('incressBtn2');
+    const $decressBtn2 = document.getElementById('decressBtn2');
+
+    $incressBtn2.onclick = e => {
+      $result2.textContent = parseInt($result2.textContent) + 1;
+      console.log(e);
+    }
+    $decressBtn2.onclick = e => {
+      $result2.textContent = parseInt($result2.textContent) - 1;
+      console.log(e);
+    }
+
+    //case3) 이벤트타겟.addEventListener(이벤트타입,이벤트핸들러,이벤트흐름)
+    const $result3 = document.getElementById('result3');
+    const $incressBtn3 = document.getElementById('incressBtn3');
+    const $decressBtn3 = document.getElementById('decressBtn3');
+
+    const incress3 = e => {
+      $result3.textContent = parseInt($result3.textContent) + 1;
+      console.log(e);
+    }
+    const decress3 = e => {
+      $result3.textContent = parseInt($result3.textContent) - 1;
+      console.log(e);
+    }
+    $incressBtn3.addEventListener('click',incress3,false);
+    $decressBtn3.addEventListener('click',decress3,false);
   </script>
 </body>
 </html>
