@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    #delPopup {
+      border:none;
+      border-radius: 5%;
+      box-shadow: 5px 5px 3px 3px rgba(0,0,0,.2);
+    }
+    #delPopup .btns {
+      display: flex;
+      justify-content: flex-end;
+    }
+    #delPopup .btns .btn{
+      border:none;
+      border-radius:3px;
+      color:#fff;
+      background-color: #3e2ee7;
+    }
+
+    #delPopup .btns .btn.btn_yes{
+      margin-right: 5px;
+    }
+    #delPopup::backdrop {
+      position: fixed;
+      inset: 0px;
+      background: rgba(219, 100, 100, 0.2);
+    }
+  </style>
+</head>
+<body>
+  <button id="delBtn">삭제</button>
+  <dialog id="delPopup">
+    <p>삭제하시겠습니까?</p>
+    <form method="dialog">
+      <div class="btns">
+        <button class="btn btn_yes" value="yes">예</button>
+        <button class="btn btn_no" value="no">아니오</button>
+      </div>
+    </form>
+  </dialog>
+  <script>
+    const $delBtn = document.getElementById('delBtn');
+    const $delPopup = document.getElementById('delPopup');
+    $delBtn.addEventListener('click',e=>{
+      $delPopup.showModal();
+    })
+    $delPopup.addEventListener('close',e=>{
+      if(e.target.returnValue == 'yes'){
+        console.log('삭제수행로직');
+      }
+    });
+  </script>
+</body>
+</html>

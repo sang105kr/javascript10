@@ -1,145 +1,144 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>버킷리스트 구현하기</title>
-  <style>
-    .input_read {
-      border: none;
-      outline: none;
-    }
-    .input_modify {
-      border: 1.8px solid rgb(188,188,188);
-    }
-    .input_modify:focus {
-      outline: 1px solid #000;
-    } 
-  </style>
-</head>
-<body>
-  <div><input type="text"><button id="add">등록</button></div>
-  <div id="bucketList">
-    <ul class="buckets">
-      <li class="bucket">
-        <input class="input_read" type="text" value="버킷리스트1" readonly> 
-        <button class="btn btn_del">삭제</button>
-        <button class="btn btn_modify">수정</button>
-      </li>
-      <li class="bucket">
-        <input class="input_modify" type="text" value="버킷리스트2" >
-        <button class="btn btn_cancel">취소</button>
-        <button class="btn btn_save">저장</button>
-      </li>
-    </ul>
-  </div>
-  <dialog id="modalDel">
-    <p>삭제하시겠습니까?</p>
-    <p><button class="btn yesBtn">yes</button><button class="btn noBtn">no</button></p>
-  </dialog>
+   <head>
+      <meta charset="UTF-8" />
+      <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>버킷리스트 구현하기</title>
+      <style>
+         .input_read {
+            border: none;
+            outline: none;
+         }
+         .input_modify {
+            border: 1.8px solid rgb(188, 188, 188);
+         }
+         .input_modify:focus {
+            outline: 1px solid #000;
+         }
+      </style>
+   </head>
+   <body>
+      <div><input type="text" /><button id="add">등록</button></div>
+      <div id="bucketList">
+         <ul class="buckets">
+            <!-- <li class="bucket">
+               <input class="input_read" type="text" value="버킷리스트1" readonly />
+               <button class="btn btn_del">삭제</button>
+               <button class="btn btn_modify">수정</button>
+            </li>
+            <li class="bucket">
+               <input class="input_modify" type="text" value="버킷리스트2" />
+               <button class="btn btn_cancel">취소</button>
+               <button class="btn btn_save">저장</button>
+            </li> -->
+         </ul>
+      </div>
+      <dialog id="delPopup">
+        <p>삭제하시겠습니까?</p>
+        <form method="dialog">
+          <div class="btns">
+            <button class="btn btn_yes" value="yes">예</button>
+            <button class="btn btn_no" value="no">아니오</button>
+          </div>
+        </form>
+      </dialog>
 
-  <script>
-    const $add = document.getElementById('add');
-    const $buckets = document.querySelector('.buckets');
+      <script>
+         const $add = document.getElementById('add');
+         const $buckets = document.querySelector('.buckets');
 
-    $add.addEventListener('click',e=>{
-      const $input = e.target.previousElementSibling;
-      const bucketText = $input.value;
-      $buckets.insertAdjacentHTML('beforeEnd',makeReadBucket(bucketText));
-      $input.value = '';
-      $input.focus();
-    });
+         //등록
+         $add.addEventListener('click', e => {
+            const $input = e.target.previousElementSibling;
+            const bucketText = $input.value;
+            $buckets.insertAdjacentElement('beforeEnd', makeReadBucket(bucketText));
+            $input.value = '';
+            $input.focus();
+         });
 
-    $buckets.addEventListener('click',e=>{
-      if(e.target.tagName != 'BUTTON') return;
-      console.log(e.target.classList[1]);
-      switch (e.target.classList[1]){
-        case 'btn_del':     del(e);     break;            //삭제
-        case 'btn_modify':  modify(e);  break;            //수정   
-        // case 'btn_cancel':  calcel(e);  break;            //취소
-        // case 'btn_save':    save(e);    break;            //저장
-        default : console.log('없는버튼');
-      }
-    });
+         $buckets.addEventListener('click', e => {
+            if (e.target.tagName != 'BUTTON') return;
+            console.log(e.target.classList[1]);
+            switch (e.target.classList[1]) {
+               case 'btn_del':
+                  del(e);
+                  break; //삭제
+               case 'btn_modify':
+                  modify(e);
+                  break; //수정
+               // case 'btn_cancel':  calcel(e);  break;            //취소
+               // case 'btn_save':    save(e);    break;            //저장
+               default:
+                  console.log('없는버튼');
+            }
+         });
 
-    //삭제
-    function del(e){
-      console.log('삭제');
-      // if(!confirm('삭제하시겠습니까')) return;
-      const $child = e.target;
+         //삭제
+         function del(e) {
+            const $button = e.target;
+            const $child = $button.closest('.bucket');
 
-      //모달띄우기
-      const $modal = document.getElementById('modalDel');
-      $modal.setAttribute('open','open');
+            //모달띄우기
+            const $delPopup = document.getElementById('delPopup');
+            $delPopup.showModal();
+            
+            $delPopup.addEventListener('close',e=>{
+              if(e.target.returnValue == 'yes'){
+                $child.remove();
+              }
+            });
+         }
 
-      //yes버튼클릭시
-      $modal.querySelector('.yesBtn').addEventListener('click',e=>{
-        $buckets.removeChild($child.closest('.bucket'));
-        $modal.removeAttribute('open');
-      });
-      //no버튼 클릭시
-      $modal.querySelector('.noBtn').addEventListener('click',e=>{
-        $modal.removeAttribute('open');
-      });
-    }
-    //수정
-    function modify(e){
-      const $oldElement = e.target.closest('.bucket');
-      const oldText = $oldElement.querySelector('.input_read').value;
+         //수정
+         function modify(e) {
+            const $oldElement = e.target.closest('.bucket');
+            const oldText = $oldElement.querySelector('.input_read').value;
+            const $newElement = makeModifyBucket(oldText);
 
-      const $newElement = document.createElement('li');
-      $newElement.innerHTML = makeModifyBucket2(oldText);
-      
-      $buckets.replaceChild( $newElement, $oldElement);
+            $buckets.replaceChild($newElement, $oldElement);
 
-      //취소버튼 클릭시
-      $newElement.querySelector('.btn_cancel')
-                 .addEventListener('click',e=>{
-                  console.log('취소');  
-      
-                });
+            //취소버튼 클릭시
+            $newElement
+               .querySelector('.btn_cancel')
+               .addEventListener('click', e => {
+                  $buckets.replaceChild($oldElement, $newElement);
+               });
 
-      //저장버튼 클릭시                 
-      $newElement.querySelector('.btn_save')
-                 .addEventListener('click',e=>{
-                  console.log('저장');
-                 });                 
+            //저장버튼 클릭시
+            $newElement.querySelector('.btn_save').addEventListener('click', e => {
+               $oldElement.querySelector('.input_read').value =
+                  $newElement.querySelector('.input_modify').value;
+               $buckets.replaceChild($oldElement, $newElement);
+            });
+         }
 
-      //취소
-      function calcel(e){
-        console.log('취소');
-      }
-      //저장
-      function save(e){
-        console.log('저장');
-      }
-    }
-
-
-
-    //읽기모드 버킷
-    function makeReadBucket(bucketText){
-      return  `<li class="bucket">
-                  <input class="input_read" type="text" value="${bucketText}" readonly> 
-                  <button class="btn btn_del">삭제</button>
-                  <button class="btn btn_modify">수정</button>
-              </li>`;
-    }
-    //수정모드 버킷
-    function makeModifyBucket(bucketText){
-      return  `<li class="bucket">
-                <input class="input_modify" type="text" value="${bucketText}" >
-                <button class="btn btn_cancel">취소</button>
-                <button class="btn btn_save">저장</button>
-              </li>`;
-    }    
-    function makeModifyBucket2(bucketText){
-      return  `<input class="input_modify" type="text" value="${bucketText}" >
-                <button class="btn btn_cancel">취소</button>
-                <button class="btn btn_save">저장</button>
-              `;
-    }    
-  </script>
-</body>
+         //읽기모드 버킷
+         function makeReadBucket(bucketText) {
+            const $template = document.createElement('template');
+            const html = `<li class="bucket">
+                        <input class="input_read" type="text" readonly> 
+                        <button class="btn btn_del">삭제</button>
+                        <button class="btn btn_modify">수정</button>
+                      </li>`;
+            $template.innerHTML = html;
+            const $element = $template.content.firstElementChild;
+            $element.querySelector('.input_read').value = bucketText;
+            return $element;
+         }
+         //수정모드 버킷
+         function makeModifyBucket(bucketText) {
+            const $template = document.createElement('template');
+            const html = `<li class="bucket">
+                        <input class="input_modify" type="text">
+                        <button class="btn btn_cancel">취소</button>
+                        <button class="btn btn_save">저장</button>
+                      </li>`;
+            $template.innerHTML = html;
+            const $element = $template.content.firstElementChild;
+            $element.querySelector('.input_modify').value = bucketText;
+            return $element;
+         }
+      </script>
+   </body>
 </html>
