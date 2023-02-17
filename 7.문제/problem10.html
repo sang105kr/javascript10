@@ -16,14 +16,29 @@
          .input_modify:focus {
             outline: 1px solid #000;
          }
+         .hidden {
+            display:none;
+         }
+         .err {
+          color:red;
+          font-weight: bold;
+          font-size: 0.8rem;
+         }
       </style>
    </head>
    <body>
       <h3>버킷 리스트</h3>
       <hr>
-      <div><input type="text" /><button id="add">등록</button></div>
+      <div>
+        <input type="text" id="input"/>
+        <button id="add">등록</button>
+        <span class="err hidden">error</span>
+      </div>
+      <div>
+        <button id="removeAll">전체삭제</button>
+      </div>
       <div id="bucketList">
-         <ul class="buckets">
+        <ul class="buckets">
             <!-- <li class="bucket">
                <input class="input_read" type="text" value="버킷리스트1" readonly />
                <button class="btn btn_del">삭제</button>
@@ -37,7 +52,7 @@
          </ul>
       </div>
       <dialog id="delPopup">
-        <p>삭제하시겠습니까?</p>
+        <p class="title">삭제하시겠습니까?</p>
         <form method="dialog">
           <div class="btns">
             <button class="btn btn_yes" value="yes">예</button>
@@ -49,14 +64,59 @@
       <script>
          const $add = document.getElementById('add');
          const $buckets = document.querySelector('.buckets');
+         const $input = document.querySelector('input');
+
+         //전체삭제
+         const $removeAll = document.getElementById('removeAll');
+         $removeAll.addEventListener('click',e=>{
+
+            //모달띄우기
+            const $delPopup = document.getElementById('delPopup');
+            $delPopup.querySelector('.title').textContent = '전제 삭제하시겠습니까?'
+            $delPopup.showModal();
+            
+            $delPopup.addEventListener('close',e=>{
+              if(e.target.returnValue == 'yes'){
+                const items = $buckets.querySelectorAll('.bucket');
+                items.forEach(child => {
+                  $buckets.removeChild(child);
+                });
+              }
+            });
+         });
+
+         const addBucket = bucketText => {
+            const $err = document.querySelector('.err');
+            bucketText = bucketText.trim();   //공백제거
+            const lenOfBucketText = bucketText.length;
+
+            if(lenOfBucketText < 1) return; //빈문자열이면 등록불가
+
+            if(lenOfBucketText > 20) {
+              $err.classList.remove('hidden');
+              $err.textContent = '20자를 초과합니다.';
+              return;
+            }else{
+              $err.classList.add('hidden');
+              $err.textContent = '';
+            }
+
+            $buckets.insertAdjacentElement('beforeEnd', makeReadBucket(bucketText));
+            $input.value = '';
+            $input.focus();
+            $input.select();
+         }
 
          //등록
          $add.addEventListener('click', e => {
             const $input = e.target.previousElementSibling; // <input>
             const bucketText = $input.value;
-            $buckets.insertAdjacentElement('beforeEnd', makeReadBucket(bucketText));
-            $input.value = '';
-            $input.focus();
+            addBucket(bucketText);
+         });
+         $input.addEventListener('change',e=>{
+            // if(e.key != 'Enter') return;
+            const bucketText = e.target.value;
+            addBucket(bucketText);
          });
 
          //삭제, 수정  (이벤트 위임적용)
@@ -84,6 +144,7 @@
 
             //모달띄우기
             const $delPopup = document.getElementById('delPopup');
+            $delPopup.querySelector('.title').textContent = '삭제하시겠습니까?'
             $delPopup.showModal();
             
             $delPopup.addEventListener('close',e=>{
