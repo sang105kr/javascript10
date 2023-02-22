@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div id="userList">
+    <table id="users">
+      <tr>
+        <th>위도</th>
+        <th>경도</th>
+      </tr>
+      <!-- <tr>
+        <td>위도1</td>
+        <td>경도1</td>
+      </tr>
+      <tr>
+        <td>위도2</td>
+        <td>경도2</td>
+      </tr> -->
+    </table>
+  </div>
+  <script>
+    const $table = document.getElementById('users');
+
+    function makeHtml(lat,lng){
+     const $template = document.createElement('template'); 
+     const html = `<tr>
+                    <td></td>
+                    <td></td>
+                  </tr>`;
+     $template.innerHTML = html;                 
+     const $tr = $template.content.firstElementChild; 
+     $tr.querySelector('td:nth-of-type(1)').textContent = lat;            
+     $tr.querySelector('td:nth-of-type(2)').textContent = lng;
+     return $tr;            
+    }
+
+    const p = new Promise( (s,f)=>{
+      //1.비동기 처리
+      const xhr = new XMLHttpRequest();
+      const url = 'https://jsonplaceholder.typicode.com/users';
+      xhr.open('GET',url);
+      xhr.send();
+
+      //2.비동기 처리결과
+      xhr.addEventListener('load',e=>{
+        if(xhr.status == 200){
+          s(JSON.parse(xhr.response));
+        }else{  
+          f(new Error('fail'));
+        }
+      });
+  });
+  console.log(p);
+
+  function addUser(users){
+    users.forEach(user => {
+      console.log(user.address.geo.lat,user.address.geo.lng);
+      const {lat,lng} = user.address.geo;
+      $table.appendChild( makeHtml(lat,lng));
+    });
+  }
+  p.then(addUser)
+   .catch(console.log)
+   .finally(console.log('finally수행됨!'));
+
+  </script>
+</body>
+</html>
