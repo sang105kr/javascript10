@@ -55,14 +55,17 @@
         }
       });
   });
-  console.log(p);
 
   function addUser(users){
+    const $template = document.createElement('template');
     users.forEach(user => {
-      console.log(user.address.geo.lat,user.address.geo.lng);
       const {lat,lng} = user.address.geo;
-      $table.appendChild( makeHtml(lat,lng));
+      $template.content.appendChild(makeHtml(lat,lng));
     });
+    //case1)
+    // $table.appendChild($template.content.cloneNode(true));
+    //case2)
+    $table.insertAdjacentHTML('beforeEnd',$template.innerHTML);
   }
   p.then(addUser)
    .catch(console.log)
