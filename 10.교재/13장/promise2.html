@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div id="userList">
+    <table id="users">
+      <tr>
+        <th>위도</th>
+        <th>경도</th>
+      </tr>
+      <!-- <tr>
+        <td>위도1</td>
+        <td>경도1</td>
+      </tr>
+      <tr>
+        <td>위도2</td>
+        <td>경도2</td>
+      </tr> -->
+    </table>
+  </div>
+  <script>
+    const $table = document.getElementById('users');
+
+    function makeHtml(lat,lng){
+     const $template = document.createElement('template'); 
+     const html = `<tr>
+                    <td></td>
+                    <td></td>
+                  </tr>`;
+     $template.innerHTML = html;                 
+     const $tr = $template.content.firstElementChild; 
+     $tr.querySelector('td:nth-of-type(1)').textContent = lat;            
+     $tr.querySelector('td:nth-of-type(2)').textContent = lng;
+     return $tr;            
+    }
+
+  function addUser(users){
+    const $template = document.createElement('template');
+    users.forEach(user => {
+      const {lat,lng} = user.address.geo;
+      $template.content.appendChild(makeHtml(lat,lng));
+    });
+    //case1)
+    // $table.appendChild($template.content.cloneNode(true));
+    //case2)
+    $table.insertAdjacentHTML('beforeEnd',$template.innerHTML);
+  }
+  const url = 'https://jsonplaceholder.typicode.com/users';
+  const optional = {
+    method : 'GET'    // 'GET':조회,'PUT':대체,'POST':생성,'DELETE':삭제,'UPDATE':수정
+  }
+
+  fetch(url,optional)
+    .then(res=>res.json())    // json문자열 포맷=>js객체로 변환
+    .then(addUser)
+    .catch(console.log)
+    .finally(console.log('finally수행됨!'));
+
+  </script>
+</body>
+</html>
